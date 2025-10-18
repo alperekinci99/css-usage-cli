@@ -26,5 +26,13 @@
     "cleanup",
     "scss",
     "prune"
-  ]
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alperekinci99/css-usage-cli.git"
+  },
+  "bugs": {
+    "url": "https://github.com/alperekinci99/css-usage-cli/issues"
+  },
+  "homepage": "https://github.com/alperekinci99/css-usage-cli#readme"
 }
