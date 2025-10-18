@@ -1,0 +1,30 @@
+{
+  "name": "css-usage-cli",
+  "version": "0.1.2",
+  "type": "module",
+  "bin": {
+    "css-usage": "./bin/css-usage.js"
+  },
+  "files": [
+    "bin",
+    "index.mjs",
+    "README.md",
+    "LICENSE"
+  ],
+  "description": "Find unused CSS classes (zero-dependency, SCSS optional).",
+  "license": "MIT",
+  "scripts": {
+    "start": "node index.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "css",
+    "unused",
+    "cli",
+    "cleanup",
+    "scss",
+    "prune"
+  ]
+}

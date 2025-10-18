@@ -1,0 +1,4 @@
+.card { padding: 8px; }
+.card.active { background: red; }
+.card.inactive { opacity: .5; }
+.subtitle { font-size: 14px; }
