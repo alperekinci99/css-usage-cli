@@ -105,21 +105,29 @@ async function expandCssInputs(input) {
   return [path.resolve(input)];
 }
 
-/* -------------------- HTML/JSX içinden class toplama -------------------- */
+/* -------------------- HTML/JSX/Twig içinden class toplama -------------------- */
 /* Statik kullanım:
    - class="..."
    - className="..."
-   Dinamik ifadeler (clsx, template literal, değişken) kapsam dışı (lite).
+   - Twig şablonlarında class içindeki statik parçalar
+   Dinamik ifadeler (clsx, koşul, değişken) kapsam dışı (lite).
 */
 async function listFiles(dir, exts) {
   return listFilesRecursive(dir, exts);
 }
 async function collectUsedClasses(htmlDir, { verbose }) {
-  const files = await listFiles(htmlDir, ['.html', '.htm', '.jsx', '.tsx']);
+  const files = await listFiles(htmlDir, ['.html', '.htm', '.jsx', '.tsx', '.twig']);
   const used = new Set();
 
   for (const file of files) {
-    const content = await fs.readFile(file, 'utf8');
+    let content = await fs.readFile(file, 'utf8');
+
+    if (file.toLowerCase().endsWith('.twig')) {
+      content = content
+        .replace(/\{#[\s\S]*?#\}/g, ' ')    // Twig comments
+        .replace(/\{%[\s\S]*?%\}/g, ' ')    // Twig tags
+        .replace(/\{\{[\s\S]*?\}\}/g, ' '); // Twig prints
+    }
 
     // class="..." ve className="..." (tek/double/backtick) — statik
     const matches = content.match(/class(Name)?\s*=\s*["'`](.*?)["'`]/g) || [];
@@ -142,18 +150,24 @@ async function collectUsedClasses(htmlDir, { verbose }) {
 
 /* -------------------- SCSS derleme (opsiyonel) + çoklu dosya okuma -------------------- */
 async function safeLoadSass() {
-  // Önce ESM import, olmazsa createRequire fallback (npx / farklı node_modules senaryoları)
   try {
     return await import('sass');
-  } catch {
-    try {
-      const { createRequire } = await import('module');
-      const require = createRequire(import.meta.url);
-      return require('sass');
-    } catch {
-      return null;
-    }
-  }
+  } catch {}
+
+  try {
+    const { createRequire } = await import('module');
+    const requireHere = createRequire(import.meta.url);
+    return requireHere('sass');
+  } catch {}
+
+  try {
+    const { createRequire } = await import('module');
+    const requireFromCwd = createRequire(path.join(process.cwd(), '._css_usage_dummy.js'));
+    const resolved = requireFromCwd.resolve('sass');
+    return requireFromCwd(resolved);
+  } catch {}
+
+  return null;
 }
 async function readManyCssOrScss(paths, { verbose }) {
   let sass = null;
