@@ -1,6 +1,6 @@
 {
   "name": "css-usage-cli",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "type": "module",
   "bin": {
     "css-usage": "./bin/css-usage.js"
