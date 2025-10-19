@@ -5,7 +5,7 @@ Optional SCSS support via user-installed `sass`.
 
 ```bash
 # basic usage
-npx css-usage ./src ./src/styles.css
+npx css-usage-cli ./src ./src/styles.css
 
 # prune unused
-npx css-usage ./src ./src/styles.css --remove --out ./src/pruned.css
+npx css-usage-cli ./src ./src/styles.css --remove --out ./src/pruned.css
